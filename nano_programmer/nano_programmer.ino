@@ -6,7 +6,7 @@
 #define WRITE_EN 13
 
 byte data[] = { 0x18, 0xd8, 0xad, 0x00, 0x02, 0x6d, 0x01, 0x02, 0x8d, 0x02, 0x02, 0x4c, 0x00, 0x80 };
-
+byte _data;
 /*
  * Output the address bits and outputEnable signal using shift registers.
  */
@@ -115,12 +115,16 @@ void loop() {
     {
       //program
       Serial.print("Programming EEPROM");
-      for (int address = 0; address < sizeof(data); address += 1) {
-        writeEEPROM(address, data[address]);
-    
-        if (address % 64 == 0) {
-          Serial.print(".");
-        }
+      //for (int address = 0; address < sizeof(data); address += 1) {
+        //writeEEPROM(address, data[address]);
+      
+        for (int address = 0; address < 2048; address += 1) {
+          while (!Serial.available());
+          _data = Serial.read();
+          writeEEPROM(address, _data);
+          //if (address % 64 == 0) {
+          //  Serial.print(".");
+          //}
       }
       Serial.println(" done");
     }
