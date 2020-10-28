@@ -1,0 +1,21 @@
+'''
+Creates an example 2Kb (2048 byte) file
+for programmer.py
+
+Uses the example Add With Carry example for
+the Synertek SYM-1
+
+October 22, 2020 - Patrick Jackson
+'''
+import sys
+
+program = [0x18, 0xD8, 0xAD, 0x00, 0x02, 0x6D, 0x01, 0x02, 0x8D, 0x02, 0x02, 0x4C, 0x00, 0x80]
+
+whitespace = b'0xFF'
+
+f = open("TEST.bin","wb")
+prog = bytearray(program)
+f.write(prog)
+for i in range(2048 - len(program)):
+    f.write(b'\xff')
+f.close()
