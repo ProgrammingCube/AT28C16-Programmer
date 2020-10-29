@@ -24,17 +24,9 @@ def main(argv):
     # check for erase/read
     if sys.argv[2] == 'e':
         ser.write(b'e')
-        while True:
-            bytesToRead = ser.inWaiting()
-            byte = ser.read(bytesToRead)
-            print(byte)
 
     if sys.argv[2] == 'r':
         ser.write(b'r')
-        while True:
-            bytesToRead = ser.inWaiting()
-            byte = ser.read(bytesToRead)
-            print(byte)
 
     # open bin file
     #(b'\xff')
