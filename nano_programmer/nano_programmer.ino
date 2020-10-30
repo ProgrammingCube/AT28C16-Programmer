@@ -7,6 +7,8 @@
 
 byte data[] = { 0x18, 0xd8, 0xad, 0x00, 0x02, 0x6d, 0x01, 0x02, 0x8d, 0x02, 0x02, 0x4c, 0x00, 0x80 };
 
+bool doIt = true;
+
 /*
  * Output the address bits and outputEnable signal using shift registers.
  */
@@ -53,7 +55,7 @@ void writeEEPROM(int address, byte data) {
   digitalWrite(WRITE_EN, LOW);
   delayMicroseconds(1);
   digitalWrite(WRITE_EN, HIGH);
-  delay(10);
+  delay(5);
 }
 
 
@@ -91,9 +93,8 @@ void loop() {
   //check for programming flag
   while (Serial.available() > 0)
   {
-    digitalWrite(13, LOW);
-    /*
     char inChar = Serial.read();
+    Serial.println(inChar);
     if (inChar == 'e')
     {
       //erase
@@ -117,15 +118,36 @@ void loop() {
     {
       //program
       Serial.print("Programming EEPROM");
-      for (int address = 0; address < sizeof(data); address += 1) {
-        writeEEPROM(address, data[address]);
-    
-        if (address % 64 == 0) {
-          Serial.print(".");
+      int address = 0;
+      while(true)
+      {
+        if (doIt)
+        {
+          //delay(20);
+          doIt = false;
+        }
+        while (Serial.available() > 0)
+        {
+          writeEEPROM(address, Serial.read());
+          address++;
+          doIt = true;
         }
       }
+      
+      /*
+      for (int address = 0; address < sizeof(data); address += 1) {
+        //writeEEPROM(address, data[address]);
+        while (counter < 2048)
+        {
+          if(Serial.available()
+          writeEEPROM(address, Serial.read());
+          if (address % 64 == 0) {
+            Serial.print(".");
+          }
+        }
+      }
+      */
       Serial.println(" done");
     }
-    */
   }
 }
