@@ -9,18 +9,18 @@ October 22, 2020 - Patrick Jackson
 '''
 import sys
 
-#program = [0x18, 0xD8, 0xAD, 0x00, 0x02, 0x6D, 0x01, 0x02, 0x8D, 0x02, 0x02, 0x4C, 0x00, 0x80]
+program = [0x18, 0xD8, 0xAD, 0x00, 0x02, 0x6D, 0x01, 0x02, 0x8D, 0x02, 0x02, 0x4C, 0x00, 0x80]
 
-program = []
-for i in range(2048):
-    program.append((i%255))
+#program = []
+#for i in range(2048):
+#    program.append((i%255))
 
 whitespace = b'0xFF'
 
 f = open("TEST.bin","wb")
-#prog = bytearray(program)
-#f.write(prog)
-f.write(bytearray(program))
+prog = bytearray(program)
+f.write(prog)
+#f.write(bytearray(program))
 for i in range(2048 - len(program)):
     f.write(b'\xff')
 f.close()

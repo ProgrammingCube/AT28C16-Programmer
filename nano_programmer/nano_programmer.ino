@@ -5,9 +5,13 @@
 #define EEPROM_D7 12
 #define WRITE_EN 13
 
-byte data[] = { 0x18, 0xd8, 0xad, 0x00, 0x02, 0x6d, 0x01, 0x02, 0x8d, 0x02, 0x02, 0x4c, 0x00, 0x80 };
+//byte data[] = { 0x18, 0xd8, 0xad, 0x00, 0x02, 0x6d, 0x01, 0x02, 0x8d, 0x02, 0x02, 0x4c, 0x00, 0x80 };
 
-bool doIt = true;
+byte data[16];
+
+int checksum_check;
+
+int _address = 0;
 
 /*
  * Output the address bits and outputEnable signal using shift registers.
@@ -55,7 +59,7 @@ void writeEEPROM(int address, byte data) {
   digitalWrite(WRITE_EN, LOW);
   delayMicroseconds(1);
   digitalWrite(WRITE_EN, HIGH);
-  delay(5);
+  delay(10);
 }
 
 
@@ -87,6 +91,7 @@ void setup() {
   digitalWrite(WRITE_EN, HIGH);
   pinMode(WRITE_EN, OUTPUT);
   Serial.begin(9600);
+  //clear buffer?
 }
 
 void loop() {
@@ -94,10 +99,11 @@ void loop() {
   while (Serial.available() > 0)
   {
     char inChar = Serial.read();
-    Serial.println(inChar);
+    //Serial.println(inChar);
     if (inChar == 'e')
     {
-      //erase
+      
+      //ERASE
       Serial.print("Erasing EEPROM");
       for (int address = 0; address <= 2047; address += 1) {
         writeEEPROM(address, 0xff);
@@ -108,46 +114,26 @@ void loop() {
       }
       Serial.println(" done");
     }
+
+    //READ
     else if (inChar == 'r')
     {
       //read
       Serial.println("Reading EEPROM");
       printContents();
     }
+
+    //PROGRAM
     else if (inChar == 'p')
     {
-      //program
-      Serial.print("Programming EEPROM");
-      int address = 0;
-      while(true)
+      // no crc yet, let's see how this holds up...
+      for (uint8_t i = 0; i < 16; i++)
+        data[i] = Serial.read();
+      for (int address = 0; address < 16; address += 1)
       {
-        if (doIt)
-        {
-          //delay(20);
-          doIt = false;
-        }
-        while (Serial.available() > 0)
-        {
-          writeEEPROM(address, Serial.read());
-          address++;
-          doIt = true;
-        }
+        writeEEPROM(_address + address, data[_address + address]);
       }
-      
-      /*
-      for (int address = 0; address < sizeof(data); address += 1) {
-        //writeEEPROM(address, data[address]);
-        while (counter < 2048)
-        {
-          if(Serial.available()
-          writeEEPROM(address, Serial.read());
-          if (address % 64 == 0) {
-            Serial.print(".");
-          }
-        }
-      }
-      */
-      Serial.println(" done");
+      _address += 16;
     }
   }
 }

@@ -11,7 +11,10 @@ Syntax:
 programmer.py [COM] [e/r/p] [\..\file.bin]
 '''
 
-import serial, sys, getopt, time
+import os, serial, sys, getopt, time
+
+def checksum(array):
+    return sum(array)%255
 
 def main(argv):
     # open serial port
@@ -21,9 +24,9 @@ def main(argv):
     ser.flush()
     time.sleep(2)
 
-    values = bytearray([4, 9, 62, 144, 56, 30, 147, 3, 210, 89, 111, 78, 184, 151, 17, 129])
-    print("Writing values")
-    ser.write(values)
+    #values = bytearray([4, 9, 62, 144, 56, 30, 147, 3, 210, 89, 111, 78, 184, 151, 17, 129])
+    #print("Writing values")
+    #ser.write(values)
     # check for erase/read
     if sys.argv[2] == 'e':
         ser.write(b"e")
@@ -40,16 +43,24 @@ def main(argv):
             f = open(sys.argv[3], "rb")
         except:
             print(sys.argv[3] + " does not exist.")
-        ser.write(b'p')
-        
-        byte = f.read()
-        print("Writing...")
-        ser.write(byte)
-        #for i in byte:
-        #time.sleep(0.01)
-        #ser.write(i)
-        #print(str(i))
-        #byte = f.read(1)
+
+        for x in range(128):
+            ser.flush()
+            print(x)
+            #byte = f.read(128)
+            rom_chunk = f.read(16)
+            print("Block : " + str(x))
+            print(bytearray(rom_chunk))
+            print("Checksum : " + str(checksum(rom_chunk)))
+            #print(str(os.stat(f).st_size))
+            #send checksum
+            ser.write(b'p')
+            #ser.write(checksum(rom_chunk))
+            #time.sleep(2)
+            #send program chunk
+            ser.write(bytearray(rom_chunk))
+            time.sleep(.5)
+            
             
         f.close()
         print("Done!")

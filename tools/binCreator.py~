@@ -13,14 +13,14 @@ import sys
 
 program = []
 for i in range(2048):
-    program.append((i%255).to_bytes(1,'little'))
+    program.append((i%255))
 
 whitespace = b'0xFF'
 
 f = open("TEST.bin","wb")
-#prog = bytearray(program)
-#f.write(prog)
-f.write(program)
+prog = bytearray(program)
+f.write(prog)
+#f.write(bytearray(program))
 for i in range(2048 - len(program)):
     f.write(b'\xff')
 f.close()
