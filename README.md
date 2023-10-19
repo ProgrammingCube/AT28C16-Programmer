@@ -1,6 +1,8 @@
 # AT28C16-Programmer
 An arduino nano based AT28C16 programmer.
 
+# Tindie Link!!!
+[AT28C16 Arduino Nano Programmer](https://www.tindie.com/products/gindiamond/at28c16-eeprom-programmer/)
 
 ## Getting Started
 
